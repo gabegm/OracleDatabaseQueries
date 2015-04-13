@@ -1,0 +1,604 @@
+SELECT employee_id,
+      last_name,
+      job_id,
+      hire_date
+FROM HR.EMPLOYEES
+ORDER BY employee_id ASC;
+
+SELECT job_id
+FROM HR.EMPLOYEES;
+
+SELECT last_name "Employee",
+      job_id "Job",
+      hire_date "Hire Date",
+      employee_id "Emp #"
+FROM HR.EMPLOYEES
+ORDER BY employee_id ASC;
+
+SELECT last_name || job_id "Employee and Title"
+FROM HR.EMPLOYEES;
+
+SELECT
+  *
+FROM HR.EMPLOYEES;
+
+SELECT LAST_NAME,
+      UPPER(LAST_NAME),
+      LOWER(LAST_NAME),
+      INITCAP(LAST_NAME),
+      'The job id for ' || ' is ' || LOWER(JOB_ID) AS "Employee List"
+FROM HR.EMPLOYEES
+WHERE INITCAP(last_name) = INITCAP('&EnterSurname');
+
+SELECT EMPLOYEE_ID,
+      CONCAT(CONCAT(FIRST_NAME, ' '), LAST_NAME),
+      JOB_ID,
+      LENGTH(LAST_NAME),
+      INSTR(LAST_NAME, 'a')
+FROM HR.EMPLOYEES
+WHERE SUBSTR(JOB_ID, 4) = 'REP';
+
+SELECT EMPLOYEE_ID,
+      FIRST_NAME,
+      LAST_NAME
+FROM HR.EMPLOYEES
+WHERE HIRE_DATE < '01-FEB-88';
+
+SELECT SYSDATE
+FROM dual;
+
+SELECT LAST_NAME,
+      HIRE_DATE,
+      HIRE_DATE + 3,
+      HIRE_DATE - 3,
+      SYSDATE - HIRE_DATE "Days worked",
+      ROUND((SYSDATE - HIRE_DATE)/7,2) "Weeks worked"
+FROM HR.EMPLOYEES;
+
+SELECT ROUND(MONTHS_BETWEEN(SYSDATE, '01-JAN-15'),2),
+      ROUND(MONTHS_BETWEEN('01-JAN-15', SYSDATE), 2)
+FROM DUAL;
+
+SELECT ADD_MONTHS(SYSDATE, 3),
+      ADD_MONTHS('01-JAN-15', 15)
+FROM DUAL;
+
+SELECT SYSDATE,
+      NEXT_DAY(SYSDATE, 'Mon'),
+      NEXT_DAY(SYSDATE, 2)
+FROM dual;
+
+SELECT LAST_DAY(SYSDATE),
+      LAST_DAY('01-MAR-15')
+FROM dual;
+
+SELECT SYSDATE AS "Date"
+FROM dual;
+
+SELECT EMPLOYEE_ID,
+      FIRST_NAME,
+      LAST_NAME,
+      SALARY,
+      ROUND(SALARY * 1.105),
+      ROUND(SALARY * 1.105) - EMPLOYEES.SALARY AS "Total Increase"
+FROM HR.EMPLOYEES;
+
+SELECT FIRST_NAME,
+      length(FIRST_NAME)
+FROM HR.EMPLOYEES
+WHERE substr(FIRST_NAME, 1, 1) = ANY ('D', 'F', 'M');
+
+SELECT FIRST_NAME,
+      length(FIRST_NAME)
+FROM HR.EMPLOYEES
+WHERE substr(LOWER(FIRST_NAME), 1, 1) = LOWER('&input');
+
+SELECT EMPLOYEE_ID,
+      LAST_NAME,
+      ROUND(months_between(sysdate, HIRE_DATE))
+FROM HR.EMPLOYEES;
+
+SELECT LAST_NAME,
+      LPAD(SALARY, 10, '*')
+FROM HR.EMPLOYEES;
+
+SELECT substr(LAST_NAME, 1, 8) || SALARY AS "INFO"
+FROM HR.EMPLOYEES
+ORDER BY SALARY DESC;
+
+SELECT LAST_NAME,
+  ROUND(months_between(sysdate, HIRE_DATE))*4 AS "WEEKS WORKED"
+FROM HR.EMPLOYEES;
+
+SELECT HIRE_DATE,
+      TO_CHAR(HIRE_DATE, 'DDTHSP Month YYYY') AS "hire_date",
+      to_char("HIRE_DATE", 'HH:MI:SS') AS "time"
+FROM HR.EMPLOYEES;
+
+SELECT to_char(sysdate, 'fmDdthsp "of" Month YYYY fmHH:MI AM')
+FROM dual;
+
+SELECT to_char(SALARY, 'L99999D00', 'nls_currency=''EURO''') AS "SALARY"
+FROM HR.EMPLOYEES;
+
+SELECT LAST_NAME,
+      upper(concat(substr(LAST_NAME, 1, 8),'_US'))
+FROM HR.EMPLOYEES;
+
+SELECT to_char(next_day(add_months(HIRE_DATE, 6), 'Fri'), 'fmDay, Month DDTH, YYYY')
+FROM HR.EMPLOYEES;
+
+SELECT to_char(sysdate+2/24, 'HH:MI AM')
+FROM dual;
+
+SELECT to_char(next_day(add_months('01-FEB-2000', 2), 'Fri'), 'fmDdthsp Month YYYY')
+FROM HR.EMPLOYEES;
+
+SELECT to_char(add_months(to_date('04 March', 'DD Month'), 2), 'DDTHSP Month YYY')
+FROM dual;
+
+SELECT LAST_NAME,
+      SALARY,
+      COMMISSION_PCT,
+      nvl(COMMISSION_PCT, 0),
+      SALARY*12*COMMISSION_PCT,
+      SALARY*12*nvl(COMMISSION_PCT, 0)
+FROM HR.EMPLOYEES;
+
+SELECT LAST_NAME,
+      SALARY,
+      COMMISSION_PCT,
+      nvl2(COMMISSION_PCT, 'SAL+COMM', 'SAL') income,
+      nvl2(COMMISSION_PCT, salary+(SALARY*COMMISSION_PCT), SALARY) ans
+FROM HR.EMPLOYEES;
+
+SELECT FIRST_NAME,
+      length(FIRST_NAME),
+      LAST_NAME,
+      length(LAST_NAME),
+      nullif(length(FIRST_NAME), length(LAST_NAME))
+FROM HR.EMPLOYEES;
+
+SELECT LAST_NAME,
+      MANAGER_ID,
+      COMMISSION_PCT,
+  coalesce(MANAGER_ID, COMMISSION_PCT, -1)
+from HR.EMPLOYEES;
+
+SELECT LAST_NAME,
+      JOB_ID,
+      SALARY,
+  CASE JOB_ID WHEN 'IT_PROG' THEN 1.10*SALARY
+              WHEN 'ST_CLERK' THEN 1.15*SALARY
+              WHEN 'SA_REP' THEN 1.20*SALARY
+              ELSE SALARY
+    END "Revised Salary"
+FROM HR.EMPLOYEES;
+
+SELECT LAST_NAME,
+      SALARY,
+      CASE WHEN SALARY < 5000 THEN 'LOW'
+          WHEN SALARY < 10000 THEN 'MEDIUM'
+          WHEN SALARY < 20000 THEN 'GOOD'
+        END "EXCELLENT"
+FROM HR.EMPLOYEES;
+
+SELECT LAST_NAME,
+      SALARY,
+      decode(trunc(SALARY/2000, 2), 0, 0.00,
+                                    1, 0.09,
+                                    2, 0.20,
+                                    3, 0.30,
+                                    4, 0.40,
+                                    5, 0.42,
+                                        0.45) TAX_RATE
+FROM HR.EMPLOYEES;
+
+SELECT FIRST_NAME,
+      decode(JOB_ID, 'IT_FROG', 1.10*SALARY,
+                      'ST_CLERK', 1.15*SALARY,
+                      'AD_PRES', 1.20*SALARY,
+                                  SALARY) "REVISED SALARY"
+FROM HR.EMPLOYEES;
+
+SELECT round(avg(SALARY),2),
+      max(SALARY),
+      min(SALARY),
+      sum(SALARY)
+FROM HR.EMPLOYEES;
+
+SELECT round(avg(SALARY),2),
+      max(SALARY),
+      min(SALARY),
+      sum(SALARY)
+FROM HR.EMPLOYEES
+WHERE JOB_ID LIKE '%REP';
+
+SELECT min(HIRE_DATE),
+      max(HIRE_DATE)
+FROM HR.EMPLOYEES;
+
+SELECT count(*)
+FROM HR.EMPLOYEES
+WHERE DEPARTMENT_ID = 50;
+
+SELECT count(DISTINCT DEPARTMENT_ID)
+FROM HR.EMPLOYEES;
+
+SELECT DEPARTMENT_ID
+FROM HR.DEPARTMENTS;
+
+SELECT count(COMMISSION_PCT)
+FROM HR.EMPLOYEES
+WHERE DEPARTMENT_ID = 80;
+
+SELECT round(avg(COMMISSION_PCT),2)
+FROM HR.EMPLOYEES;
+
+SELECT round(avg(nvl(COMMISSION_PCT,0)),2)
+FROM HR.EMPLOYEES;
+
+SELECT DEPARTMENT_ID,
+      avg(SALARY)
+FROM HR.EMPLOYEES
+GROUP BY DEPARTMENT_ID
+ORDER BY avg(SALARY);
+
+SELECT JOB_ID,
+      max(SALARY)
+FROM HR.EMPLOYEES
+GROUP BY JOB_ID;
+
+SELECT DEPARTMENT_ID,
+      sum(SALARY)
+FROM HR.EMPLOYEES
+GROUP BY DEPARTMENT_ID
+ORDER BY DEPARTMENT_ID;
+
+SELECT DEPARTMENT_ID,
+      JOB_ID,
+      sum(SALARY),
+      count(EMPLOYEE_ID)
+FROM HR.EMPLOYEES
+GROUP BY DEPARTMENT_ID, JOB_ID
+ORDER BY DEPARTMENT_ID;
+
+SELECT DEPARTMENT_ID,
+      sum(SALARY)
+FROM HR.EMPLOYEES
+HAVING sum(SALARY) > 11000
+GROUP BY DEPARTMENT_ID;
+
+SELECT DEPARTMENT_ID,
+      max(SALARY)
+FROM HR.EMPLOYEES
+GROUP BY DEPARTMENT_ID
+HAVING max(SALARY) > 10000;
+
+SELECT JOB_ID,
+      sum(SALARY) PAYROLL
+FROM HR.EMPLOYEES
+WHERE JOB_ID LIKE '%REP'
+GROUP BY JOB_ID
+HAVING sum(SALARY) > 1000
+ORDER BY sum(SALARY);
+
+SELECT DEPARTMENT_ID,
+      count(EMPLOYEE_ID)
+FROM HR.EMPLOYEES
+GROUP BY DEPARTMENT_ID
+HAVING count(EMPLOYEE_ID) > 5
+ORDER BY 1 DESC;
+
+SELECT to_char(HIRE_DATE, 'YYYY') AS YEAR,
+      count(EMPLOYEE_ID) AS "Hired employees"
+FROM HR.EMPLOYEES
+WHERE HIRE_DATE BETWEEN to_date('01 Jan 2000', 'DD Mon YYYY') AND
+                        to_date('21 Dec 2009', 'DD Mon YYYY')
+GROUP BY to_char(HIRE_DATE, 'YYYY')
+ORDER BY 1 ASC;
+
+SELECT DEPARTMENT_ID,
+      round(avg(SALARY), 2)
+FROM HR.EMPLOYEES
+WHERE DEPARTMENT_ID IN (20, 30, 80, 90)
+GROUP BY DEPARTMENT_ID
+HAVING round(avg(SALARY), 2) > 1000
+ORDER BY 1 DESC;
+
+SELECT EMPLOYEE_ID,
+      FIRST_NAME,
+      LAST_NAME
+FROM HR.EMPLOYEES
+ORDER BY EMPLOYEE_ID ASC;
+
+SELECT FIRST_NAME,
+      LAST_NAME,
+      SALARY
+FROM HR.EMPLOYEES
+WHERE SALARY > 6000
+ORDER BY FIRST_NAME, LAST_NAME;
+
+SELECT FIRST_NAME,
+      LAST_NAME,
+      SALARY,
+      SALARY * 0.18 tax
+FROM HR.EMPLOYEES
+WHERE SALARY > 6000
+ORDER BY FIRST_NAME, LAST_NAME;
+
+SELECT concat(concat(FIRST_NAME, ' '), LAST_NAME) AS "Full Name"
+FROM HR.EMPLOYEES
+WHERE substr(FIRST_NAME, 1, 1) = 'A';
+
+SELECT concat(concat(FIRST_NAME, ' '), LAST_NAME) AS "has Job ID",
+      JOB_ID AS "Employees"
+FROM HR.EMPLOYEES;
+
+SELECT EMPLOYEE_ID,
+      FIRST_NAME,
+      LAST_NAME,
+      SALARY
+FROM HR.EMPLOYEES
+WHERE SALARY >= 8000 AND SALARY <= 10000;
+
+SELECT EMPLOYEE_ID,
+      FIRST_NAME,
+      LAST_NAME
+FROM HR.EMPLOYEES
+WHERE JOB_ID IS NULL;
+
+SELECT concat(concat(FIRST_NAME, ' '), LAST_NAME)
+FROM HR.EMPLOYEES
+ORDER BY 1;
+
+SELECT rpad('$', round(SALARY/1000), '$')
+FROM HR.EMPLOYEES;
+
+SELECT LAST_NAME,
+      round((sysdate - HIRE_DATE)/7) AS "Weeks worked"
+FROM HR.EMPLOYEES
+WHERE DEPARTMENT_ID = '90';
+
+SELECT FIRST_NAME AS "name",
+      LAST_NAME AS "surname",
+      DEPARTMENT_ID AS "department"
+FROM HR.EMPLOYEES
+ORDER BY DEPARTMENT_ID, LAST_NAME, FIRST_NAME;
+
+SELECT FIRST_NAME,
+      LAST_NAME,
+      substr(JOB_ID, 4)
+FROM HR.EMPLOYEES
+ORDER BY LAST_NAME, FIRST_NAME;
+
+SELECT concat(concat(concat(concat(concat(concat(FIRST_NAME, ' '), LAST_NAME), ' works in '), substr(JOB_ID, 1, 2)), ' as a '), substr(JOB_ID, 4)),
+      FIRST_NAME || ' ' || LAST_NAME || ' works in ' || substr(JOB_ID, 1, 2) || ' as a ' || substr(JOB_ID, 4)
+FROM HR.EMPLOYEES;
+
+SELECT FIRST_NAME,
+      LAST_NAME,
+      JOB_ID
+FROM HR.EMPLOYEES
+WHERE substr(JOB_ID, -3, 3) = 'MAN';
+
+SELECT FIRST_NAME,
+      LAST_NAME,
+      SALARY,
+      rpad('$', round(SALARY/1000), '$') AS "Salary Indicator"
+FROM HR.EMPLOYEES
+ORDER BY SALARY DESC;
+
+SELECT FIRST_NAME,
+      LAST_NAME,
+      JOB_ID,
+      concat(concat(concat('Department: ', substr(JOB_ID, 1, 2)), ' Job: '), substr(JOB_ID, 4)) AS "Details"
+FROM HR.EMPLOYEES
+ORDER BY LAST_NAME, FIRST_NAME;
+
+SELECT FIRST_NAME,
+      LAST_NAME,
+      trim('_' FROM JOB_ID) AS "Job"
+FROM HR.EMPLOYEES
+ORDER BY JOB_ID, LAST_NAME, FIRST_NAME;
+
+SELECT FIRST_NAME,
+      LAST_NAME,
+      round(SALARY+(SALARY*COMMISSION_PCT), 2) AS "Total Salary"
+FROM HR.EMPLOYEES
+WHERE COMMISSION_PCT IS NOT NULL;
+
+SELECT FIRST_NAME,
+      LAST_NAME,
+      to_char(HIRE_DATE, 'DAY, DDth MONTH YYYY'),
+      to_char(next_day(add_months(HIRE_DATE, 6), 2), 'DAY, DDth MONTH YYYY') AS "Review Date",
+      to_char(add_months(HIRE_DATE, 36), 'DAY, DDth MONTH YYYY') AS "Renewal Date",
+      round((months_between(sysdate, HIRE_DATE)/12)*365,0) AS "Days Employed",
+      round(months_between(sysdate, HIRE_DATE),0) AS "Months Employed",
+      round(months_between(sysdate, HIRE_DATE)/12, 0) AS "Years Employed"
+FROM HR.EMPLOYEES;
+
+SELECT FIRST_NAME,
+      LAST_NAME,
+      round(SALARY, 0) AS "Salary",
+      COMMISSION_PCT,
+      CASE WHEN COMMISSION_PCT is NULL THEN 0
+           WHEN COMMISSION_PCT IS NOT NULL THEN round(SALARY+(SALARY*COMMISSION_PCT), 0)
+      END "Total Salary"
+FROM HR.EMPLOYEES
+ORDER BY LAST_NAME, FIRST_NAME;
+
+SELECT FIRST_NAME,
+      LAST_NAME,
+      MANAGER_ID,
+      CASE WHEN MANAGER_ID IS NULL THEN 'No Manager'
+            WHEN MANAGER_ID IS NOT NULL THEN 'Has Manager'
+      END "Has Manager?"
+FROM HR.EMPLOYEES;
+
+SELECT FIRST_NAME,
+      LAST_NAME,
+      CASE WHEN (SALARY+(SALARY*COMMISSION_PCT)) = SALARY THEN NULL
+           WHEN COMMISSION_PCT IS NOT NULL THEN (SALARY+(SALARY*COMMISSION_PCT))
+      END "Commissioned Salary"
+FROM HR.EMPLOYEES
+ORDER BY "Commissioned Salary", LAST_NAME, FIRST_NAME;
+
+SELECT FIRST_NAME,
+      LAST_NAME,
+      CASE WHEN DEPARTMENT_ID IS NOT NULL THEN to_char(DEPARTMENT_ID)
+           WHEN DEPARTMENT_ID IS NULL THEN JOB_ID
+      END "Department"
+FROM HR.EMPLOYEES
+ORDER BY "Department", LAST_NAME, FIRST_NAME;
+
+SELECT FIRST_NAME,
+      LAST_NAME,
+      JOB_ID,
+      CASE WHEN substr(JOB_ID, 1, 2) = 'AD' THEN 'Administration'
+           WHEN substr(JOB_ID, 1, 2) = 'HR' THEN 'Human Resources'
+           ELSE 'Other'
+      END "Department"
+FROM HR.EMPLOYEES
+ORDER BY "Department", LAST_NAME, FIRST_NAME;
+
+SELECT FIRST_NAME,
+      LAST_NAME,
+      SALARY,
+      CASE WHEN SALARY < 4000 THEN 'Low Pay'
+           WHEN SALARY > 4000 AND SALARY < 9000 THEN 'Medium Pay'
+           WHEN SALARY > 4000 AND SALARY < 10000 THEN 'Good Pay'
+           ELSE 'Good Pay'
+      END "Pay Indicator"
+FROM HR.EMPLOYEES
+ORDER BY "Pay Indicator", LAST_NAME, FIRST_NAME;
+
+SELECT FIRST_NAME || ' ' || LAST_NAME || ' earns $' || SALARY || ' but $' || SALARY*3 || ' is the dream.'
+FROM HR.EMPLOYEES;
+
+SELECT FIRST_NAME,
+      LAST_NAME,
+      HIRE_DATE,
+      to_char(add_months(HIRE_DATE, 6), 'Day "the" DDthsp "of" MONTH, YYYY') AS "Probation Termination"
+FROM HR.EMPLOYEES;
+
+SELECT LAST_NAME,
+      to_char(HIRE_DATE, 'DD-MM-YY') AS "Hire Date",
+      to_char(HIRE_DATE, 'DAY') AS "Day"
+FROM HR.EMPLOYEES;
+
+SELECT LAST_NAME,
+      CASE WHEN COMMISSION_PCT IS NOT NULL THEN to_char(COMMISSION_PCT)
+           WHEN COMMISSION_PCT IS NULL THEN 'No commission'
+      END
+FROM HR.EMPLOYEES;
+
+SELECT JOB_ID,
+      CASE WHEN JOB_ID LIKE 'AD_PRES' THEN 'A'
+           WHEN JOB_ID LIKE 'MK_MAN' THEN 'B'
+           WHEN JOB_ID LIKE 'IT_PROG' THEN 'C'
+           WHEN JOB_ID LIKE 'SA_REP' THEN 'D'
+           WHEN JOB_ID LIKE 'ST_Clerk' THEN 'E'
+           ELSE '0'
+      END
+FROM HR.EMPLOYEES;
+
+SELECT JOB_ID,
+      decode(JOB_ID, 'AD_PRES', 'A',
+                      'MK_MAN', 'B',
+                      'IT_PROG', 'C',
+                      'SA_REP', 'D',
+                                '0')
+FROM HR.EMPLOYEES;
+
+SELECT e.last_name,
+      d.department_name
+FROM HR.EMPLOYEES e
+    JOIN HR.DEPARTMENTS d
+    ON (e.DEPARTMENT_ID = d.DEPARTMENT_ID);
+
+SELECT e.last_name,
+      d.department_name
+FROM HR.EMPLOYEES e
+    LEFT OUTER JOIN HR.DEPARTMENTS d
+    ON (d.department_id = d.DEPARTMENT_ID);
+
+SELECT e.last_name,
+      d.department_name
+FROM HR.EMPLOYEES e
+    RIGHT OUTER JOIN HR.EMPLOYEES e
+    ON (e.DEPARTMENT_ID = d.department_id);
+
+SELECT e.last_name,
+      d.department_name
+FROM HR.EMPLOYEES
+    LEFT OUTER JOIN HR.EMPLOYEES e
+    ON (e.DEPARTMENT_ID = d.department_id);
+
+SELECT e.last_name,
+      d.department_name
+FROM HR.EMPLOYEES e
+    FULL OUTER JOIN HR.EMPLOYEES e
+    ON (e.department_id = d.department_id);
+
+-- Subtitution Variables
+SELECT
+    *
+FROM HR.EMPLOYEES
+WHERE SALARY > &x;
+
+SELECT
+  LAST_NAME,
+  SALARY,
+  JOB_ID,
+  '&&job.CLERK',
+FROM HR.employees
+WHERE JOB_ID LIKE '&job.CLERK';
+
+UNDEFINE job;
+
+-- User Defined Variables
+DEFINE x = 10000;
+SELECT
+  LAST_NAME,
+  FIRST_NAME,
+  SALARY
+FROM  HR.EMPLOYEES
+WHERE SALARY > &x;
+
+UNDEFINE x;
+
+SELECT
+  *
+FROM HR.EMPLOYEES
+WHERE SALARY BETWEEN &&x AND &x+1000;
+
+-- User friendly Prompt
+ACCEPT jbtl PROMPT 'Entter job_id Eg. (IT_PROG);
+SELECT '&jbtl' AS "test"
+FROM DUAL;
+
+ACCEPT jbtl DEFAULT 'SA_CLERK' PROMPT 'Entter job_id Eg. (IT_PROG);
+SELECT '&jbtl' AS "test"
+FROM DUAL;
+
+ACCEPT sal NUMBER FORMAT '9999.99' DEFAULT '00.0' PROMPT 'Enter weekly salary';
+SELECT
+  FIRST_NAME,
+  LAST_NAME,
+  SALARY
+FROM HR.EMPLOYEES
+WHERE SALARY >= &sal;
+
+ACCEPT myd DATE DEFAULT '01-MAR-95'
+SELECT
+  *
+FROM HR>EMPLOYEES
+WHERE HIRE_DATE > &myd;
+
+ACCEPT uname CHAR PROMPT 'Username';
+ACC pwd CHAR PROMPT 'password' HIDE;
+SELECT
+  '&uname' AS "Username",
+  '&pwd' AS "Password"
+FROM DUAL;
